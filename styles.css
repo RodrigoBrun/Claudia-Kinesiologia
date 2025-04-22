@@ -1,0 +1,817 @@
+/* =============================================
+   Variables globales y ajustes base
+============================================= */
+:root {
+    --verde-agua: #A8DAD7;
+    --lavanda: #CBAACB;
+    --beige: #FDF6EC;
+    --gris-oscuro: #4A4A4A;
+    --dorado: #D4AF37;
+    --transition: 0.3s ease;
+  }
+  
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--beige);
+    color: var(--gris-oscuro);
+  }
+  
+  /* =============================================
+     Navbar fija superior
+  ============================================= */
+  nav.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 1rem 2rem;
+    z-index: 100;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+
+/* =============================================
+   Estilos para el Footer
+============================================= */
+
+/* Contenedor principal del footer */
+.footer {
+    margin-top: 4rem;                        /* Espacio superior */
+    padding: 2rem 1rem;                      /* Espaciado interno */
+    background-color: #fff8f0;               /* Color de fondo suave */
+    text-align: center;                      /* Centra todo el texto */
+    color: var(--gris-oscuro);              /* Color de texto */
+    border-top: 1px solid #eee;              /* Línea sutil arriba del footer */
+    font-size: 0.9rem;                       /* Tamaño base del texto */
+  }
+  
+  /* Enlaces del footer */
+  .footer a {
+    color: var(--gris-oscuro);              /* Color igual al texto base */
+    text-decoration: none;                  /* Sin subrayado */
+    transition: color 0.3s ease;            /* Transición suave al hacer hover */
+  }
+  
+  /* Efecto hover en los enlaces */
+  .footer a:hover {
+    color: var(--lavanda);                  /* Color lavanda al pasar el mouse */
+  }
+  
+  /* Margen para párrafos dentro del footer */
+  .footer-info p,
+  .footer-credits p {
+    margin: 0.4rem 0;
+  }
+  
+  /* Contenedor para los íconos sociales */
+  .footer-social {
+    margin: 1rem 0;                          /* Espacio entre bloques */
+  }
+  
+  /* Íconos sociales (Instagram, WhatsApp...) */
+  .footer-social a {
+    margin: 0 0.5rem;                        /* Separación horizontal */
+    font-size: 1.5rem;                       /* Tamaño de los íconos */
+    color: var(--gris-oscuro);              /* Color base */
+  }
+  
+  /* Hover para íconos sociales */
+  .footer-social a:hover {
+    color: var(--dorado);                   /* Destaca en dorado */
+  }
+  
+  /* Créditos del sitio */
+  .footer-credits {
+    opacity: 0.6;                            /* Un poco más tenue */
+    font-size: 0.8rem;                       /* Texto más pequeño */
+  }
+  
+  /* Acceso oculto al modo admin */
+  #adminAccess {
+    font-size: 0.3rem;                       /* Tamaño mínimo para evitar visibilidad */
+    opacity: 0;                              /* Totalmente invisible */
+    pointer-events: auto;                   /* Aún así clickeable */
+  }
+  
+
+
+  /* =============================================
+     Pantalla inicial dividida (Kinesiología / Estética)
+  ============================================= */
+  .split-screen {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    margin-top: 80px;
+  }
+  
+  .mitad {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .mitad img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+  }
+  
+  .mitad:hover {
+    transform: scale(1.02);
+  }
+  
+  /* =============================================
+     Secciones de contenido interno
+  ============================================= */
+  .section {
+    max-width: 900px;
+    margin: 2rem auto;
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.6s ease;
+  }
+  
+  h2 {
+    color: var(--dorado);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  h3 {
+    color: var(--dorado);
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--dorado);
+    padding-bottom: 0.3rem;
+  }
+  
+  ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* =============================================
+     Botón "Volver"
+  ============================================= */
+  .btnVolver {
+    background-color: transparent;
+    border: 2px solid var(--gris-oscuro);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .btnVolver:hover {
+    background-color: var(--gris-oscuro);
+    color: white;
+  }
+  
+  /* =============================================
+     Formularios
+  ============================================= */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  form label {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gris-oscuro);
+  }
+  
+  form input,
+  form textarea {
+    padding: 0.7rem;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border 0.3s;
+  }
+  
+  form input:focus,
+  form textarea:focus {
+    border-color: var(--lavanda);
+    outline: none;
+    box-shadow: 0 0 5px var(--lavanda);
+  }
+  
+  form button {
+    background-color: #25D366;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+  
+  form button:hover {
+    background-color: #1ebe5d;
+  }
+  
+  /* =============================================
+     Validación visual de formularios
+  ============================================= */
+  input:invalid,
+  textarea:invalid {
+    border: 2px solid #ff5c5c;
+  }
+  
+  input:valid,
+  textarea:valid {
+    border: 2px solid var(--verde-agua);
+  }
+  
+  /* =============================================
+     Mensaje de éxito al enviar
+  ============================================= */
+  .mensaje-exito {
+    margin-top: 1rem;
+    padding: 0.8rem 1.2rem;
+    background-color: #e6ffee;
+    border: 1px solid var(--verde-agua);
+    color: #2c3e50;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    opacity: 0;
+    display: none;
+  }
+  
+  /* =============================================
+     Test rápido de lesión
+  ============================================= */
+  #testLesion button.opcion {
+    margin: 0.5rem 0.5rem 0 0;
+    padding: 0.6rem 1rem;
+    border: 2px solid var(--lavanda);
+    border-radius: 10px;
+    background-color: white;
+    color: var(--gris-oscuro);
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  #testLesion button.opcion:hover {
+    background-color: var(--lavanda);
+    color: white;
+  }
+  
+  #resultadoLesion {
+    background-color: #f0f9f4;
+    border-left: 5px solid var(--verde-agua);
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  /* =============================================
+     Tratamientos desplegables (acordeón)
+  ============================================= */
+  .tratamiento-box {
+    margin-bottom: 1rem;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  
+  .encabezado-tratamiento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--gris-oscuro);
+  }
+  
+  .ver-info-btn {
+    background-color: transparent;
+    border: none;
+    color: var(--dorado);
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .ver-info-btn:hover {
+    color: #b99620;
+  }
+  
+  .contenido-tratamiento {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+    padding-top: 0;
+  }
+  
+  .tratamiento-box.abierto .contenido-tratamiento {
+    max-height: 500px;
+    opacity: 1;
+    padding-top: 0.6rem;
+  }
+  
+  /* =============================================
+     Lesiones tratadas (acordeón)
+  ============================================= */
+  .lesion-box {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  
+  .encabezado-lesion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .ver-info-lesion {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .ver-info-lesion:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .contenido-lesion {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    padding-top: 0;
+    margin-top: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+  }
+  
+  .lesion-box.abierta .contenido-lesion {
+    max-height: 500px;
+    opacity: 1;
+    padding-top: 0.6rem;
+    margin-top: 0.4rem;
+  }
+  
+/* Horarios de atención en tarjetas */
+.horarios-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+  
+  .horario-item {
+    background-color: #f9f9f9;
+    border-left: 5px solid var(--lavanda);
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.3s ease;
+  }
+  
+  .horario-item:hover {
+    background-color: #f3f3f3;
+  }
+  
+  .horario-item .dia {
+    font-weight: 600;
+    color: var(--gris-oscuro);
+  }
+  
+  .horario-item .horas {
+    font-size: 0.95rem;
+    color: #444;
+  }
+  
+  .importante {
+    margin-top: 1.2rem;
+    font-weight: bold;
+    color: var(--gris-oscuro);
+    background-color: #fff8e1;
+    padding: 0.6rem 1rem;
+    border-left: 5px solid var(--dorado);
+    border-radius: 8px;
+  }
+  
+
+
+/* =============================================
+   Mapa interactivo con botón de "Cómo llegar"
+============================================= */
+
+/* Contenedor del iframe del mapa con bordes redondeados y sombra */
+.mapa-container {
+    margin-top: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border-radius: 12px;
+  }
+  
+  /* Contenedor del botón centrado */
+  .btn-mapa-wrapper {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Estilos del botón "Cómo llegar" */
+  .btnMapa {
+    background-color: var(--lavanda);
+    color: white;
+    font-weight: 600;
+    padding: 0.8rem 1.4rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btnMapa:hover {
+    background-color: var(--verde-agua);
+  }
+  
+
+
+  #tarjetaRegalo {
+    display: none;
+  }
+  
+  .regalo-cta-wrapper {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .btnRegalo {
+    background-color: var(--dorado);
+    color: white;
+    font-weight: bold;
+    padding: 0.9rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btnRegalo:hover {
+    background-color: #b99620;
+  }
+  
+
+/* =============================================
+   Estilo para SELECT de tratamientos
+============================================= */
+
+select#tratamientoRegalo {
+    padding: 0.7rem;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: white;
+    color: var(--gris-oscuro);
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+    appearance: none; /* oculta la flecha predeterminada en algunos navegadores */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23999' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px;
+  }
+  
+  /* Al enfocar */
+  select#tratamientoRegalo:focus {
+    border-color: var(--lavanda);
+    outline: none;
+    box-shadow: 0 0 5px var(--lavanda);
+  }
+  
+
+  
+
+
+
+  .modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  .modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+  }
+  .close-modal {
+    position: absolute;
+    top: 20px; right: 30px;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+
+
+/* ==========================
+   Estilo para acceso Admin
+========================== */
+
+footer a#adminAccess {
+    color: var(--gris-oscuro);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: block;
+    text-align: center;
+    margin-top: 2rem;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+  
+  footer a#adminAccess:hover {
+    opacity: 1;
+  }
+  
+  /* ==========================
+     Formulario de Login Admin
+  ========================== */
+  
+  #loginAdmin {
+    background-color: #fff;
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  #loginAdmin input[type="password"] {
+    padding: 0.7rem 1rem;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 1rem;
+  }
+  
+  #btnLoginAdmin {
+    background-color: var(--lavanda);
+    color: white;
+    font-weight: 600;
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  #btnLoginAdmin:hover {
+    background-color: var(--verde-agua);
+  }
+  
+  
+  /* ==========================
+     Panel de administración
+  ========================== */
+  
+  #adminPanel {
+    max-width: 800px;
+    margin: 2rem auto;
+    background-color: #fefefe;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+  
+  #adminPanel h2 {
+    font-size: 1.5rem;
+    color: var(--dorado);
+    margin-bottom: 1rem;
+  }
+  
+  #listaTurnos div {
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    background-color: #fcfcfc;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  }
+  
+
+/* Modal de login */
+/* Modal oscuro fondo */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 200;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Contenido del modal */
+  .modal-content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  /* Botón de cerrar */
+  .close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+  }
+  
+  #adminPanel {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fffdfb;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  }
+  
+  #adminPanel h2 {
+    font-size: 1.8rem;
+    color: var(--dorado);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  
+  #adminPanel h2::before {
+    content: "📋";
+  }
+  
+  #listaTurnos div {
+    background-color: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-left: 5px solid var(--lavanda);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease;
+  }
+  
+  #listaTurnos div:hover {
+    transform: translateY(-2px);
+  }
+  
+  #listaTurnos strong {
+    color: var(--gris-oscuro);
+    font-size: 1.05rem;
+  }
+  
+  #listaTurnos span {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .btnEliminar {
+    margin-top: 0.6rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #ff5c5c;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btnEliminar:hover {
+    background-color: #e63946;
+  }
+  
+  .btnCerrarAdmin {
+    background-color: transparent;
+    border: 2px solid var(--lavanda);
+    color: var(--lavanda);
+    font-weight: bold;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btnCerrarAdmin:hover {
+    background-color: var(--lavanda);
+    color: white;
+  }
+  
+
+/* =============================================
+
+     Responsividad (pantallas chicas)
+
+  ============================================= */
+
+  
+
+  @media (max-width: 768px) {
+    .split-screen {
+      flex-direction: column;
+      height: auto;
+    }
+ 
+
+    .mitad {
+      width: 100%;
+      height: auto;
+    }
+ 
+
+    .mitad img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+
+    nav.navbar {
+      font-size: 1rem;
+      padding: 0.8rem;
+    }
+  }
+
+  
+
+
+
+
+
