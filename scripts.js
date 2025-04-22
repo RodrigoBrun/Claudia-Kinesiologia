@@ -360,11 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
           }, 3000);
         }
       
-        // Redirigir a WhatsApp
-        let url = `${urlBase}?text=${encodeURIComponent(mensaje)}`;
-        setTimeout(() => {
-          window.open(url, '_blank');
-        }, 1000);
+       // Redirigir a WhatsApp (sin delay para funcionar mejor en celular)
+          let url = `${urlBase}?text=${encodeURIComponent(mensaje)}`;
+          window.location.href = url;
       }
       
 
