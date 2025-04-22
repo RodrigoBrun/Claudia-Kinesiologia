@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     class Sistema {
       constructor() {
+        
         this.obtenerElementos();
         this.configurarEventos();
         this.inicializarTestLesion();
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         this.configurarLesionesInteractivo();
         this.configurarVerMasTratamientos(); // <-- Asegurate de tener esta línea ACTIVA
         this.adminPass = "claudia2025"; // clave provisoria, la podemos cambiar
+        this.todosLosTurnos = [];
       }
 
       obtenerElementos() {
@@ -123,7 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
             this.adminPanel.style.display = 'none';
           });
         }
+      
+        // 🔄 BOTÓN REFRESCAR LISTA
+        const btnRefrescar = document.querySelector('#btnRefrescarTurnos');
+        if (btnRefrescar) {
+          btnRefrescar.addEventListener('click', () => {
+            this.cargarTurnosAdmin();
+          });
+        }
       }
+      
       
       
       
@@ -318,26 +329,53 @@ document.addEventListener('DOMContentLoaded', () => {
   
       async enviarWhatsApp(tipo) {
         let mensaje = '';
-        let urlBase = 'https://wa.me/59899916753'; // Reemplazar con número de Claudia
+        let urlBase = 'https://wa.me/59899916753'; // Número real de Claudia
         let mensajeExito;
       
         if (tipo === 'kine') {
           let nombre = document.querySelector('#nombreKine').value.trim();
           let fecha = document.querySelector('#fechaKine').value;
-          let hora = document.querySelector('#horaKine').value;
+          let franja = document.querySelector('#franjaKine').value;
           let sintomas = document.querySelector('#sintomas').value.trim();
+          let telefono = document.querySelector('#telefonoKine').value.trim();
       
-          // 👉 Guardar en Firebase
-          await db.collection('turnos').add({
-            nombre: nombre,
-            fecha: fecha,
-            hora: hora,
-            sintomas: sintomas,
-            creado: new Date()
-          });
+          if (!nombre || !fecha || !franja || !sintomas || !telefono) {
+            alert("Por favor completá todos los campos.");
+            return;
+          }
       
-          mensaje = `Hola Claudia, soy ${nombre}. Me gustaría agendar una sesión de kinesiología para el ${fecha} a las ${hora}.\n\nSíntomas: ${sintomas}`;
-          mensajeExito = document.querySelector('#formKine + .mensaje-exito');
+          // Normalizar número (si empieza en 9 lo dejamos, si no tiene 0 se lo agregamos)
+          if (!telefono.startsWith('0') && telefono.length === 8) {
+            telefono = '0' + telefono;
+          }
+      
+          try {
+            // 👉 Guardar en Firebase
+            await db.collection('turnos').add({
+              nombre,
+              fecha,
+              franja,
+              sintomas,
+              telefono,
+              creado: new Date()
+            });
+      
+            // 📝 Armar mensaje con formato para WhatsApp
+            mensaje = `💆‍♀️ *Nueva reserva de Kinesiología*\n\n` +
+                      `*👤 Nombre:* ${nombre}\n` +
+                      `*📅 Fecha:* ${fecha}\n` +
+                      `*🕒 Turno:* ${franja.charAt(0).toUpperCase() + franja.slice(1)}\n` +
+                      `*📋 Síntomas:* ${sintomas}\n` +
+                      `*📞 WhatsApp:* ${telefono}\n\n` +
+                      `🟢 *Este mensaje fue generado automáticamente desde la web de Claudia*`;
+      
+            mensajeExito = document.querySelector('#formKine + .mensaje-exito');
+      
+          } catch (err) {
+            console.error("❌ Error guardando en Firebase:", err);
+            alert("Hubo un problema al guardar el turno. Intentalo nuevamente.");
+            return;
+          }
         }
       
         if (tipo === 'est') {
@@ -346,11 +384,22 @@ document.addEventListener('DOMContentLoaded', () => {
           let tratamiento = document.querySelector('#tratamientoEst').value.trim();
           let consulta = document.querySelector('#consultaEst').value.trim();
       
-          mensaje = `Hola Claudia, soy ${nombre}. Me gustaría reservar un turno de estética el día ${fecha}.\n\nTratamiento: ${tratamiento}\nConsulta: ${consulta}`;
+          if (!nombre || !fecha || !tratamiento) {
+            alert("Completá nombre, fecha y tratamiento.");
+            return;
+          }
+      
+          mensaje = `💅 *Nueva reserva de Estética*\n\n` +
+                    `*👤 Nombre:* ${nombre}\n` +
+                    `*📅 Fecha:* ${fecha}\n` +
+                    `*💆 Tratamiento:* ${tratamiento}\n` +
+                    `*📝 Consulta:* ${consulta || 'Sin consulta adicional'}\n\n` +
+                    `🟢 *Este mensaje fue generado automáticamente desde la web de Claudia*`;
+      
           mensajeExito = document.querySelector('#formEst + .mensaje-exito');
         }
       
-        // Mostrar mensaje visual
+        // ✅ Mostrar confirmación visual
         if (mensajeExito) {
           mensajeExito.style.display = 'block';
           mensajeExito.style.opacity = '1';
@@ -360,10 +409,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }, 3000);
         }
       
-       // Redirigir a WhatsApp (sin delay para funcionar mejor en celular)
-          let url = `${urlBase}?text=${encodeURIComponent(mensaje)}`;
-          window.location.href = url;
+        // 📲 Redirigir a WhatsApp
+        const url = `${urlBase}?text=${encodeURIComponent(mensaje)}`;
+        window.location.href = url;
       }
+      
+      
       
 
 
@@ -471,8 +522,18 @@ document.addEventListener('DOMContentLoaded', () => {
       
 
 
+
+      
+
+
+
       async cargarTurnosAdmin() {
         const lista = document.querySelector('#listaTurnos');
+        const resumen = document.querySelector('#resumenTurnos');
+        const buscador = document.querySelector('#buscadorTurnos');
+        const filtroFecha = document.querySelector('#filtroFecha');
+        this.todosLosTurnos = [];
+      
         lista.innerHTML = '<p>Cargando turnos...</p>';
       
         try {
@@ -483,48 +544,172 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
       
-          lista.innerHTML = ''; // Limpiar
+          lista.innerHTML = '';
+          const hoy = new Date().toISOString().split('T')[0];
+          const mesActual = hoy.slice(0, 7);
       
           snapshot.forEach(doc => {
             const data = doc.data();
-            const div = document.createElement('div');
-            div.innerHTML = `
-              <strong>${data.fecha}</strong> a las <strong>${data.hora}</strong><br>
-              <span>${data.nombre}</span> - ${data.sintomas || 'Sin descripción'}
-              <br><button class="btnEliminar" data-id="${doc.id}">🗑 Eliminar</button>
-            `;
-            lista.appendChild(div);
+            const id = doc.id;
+            this.todosLosTurnos.push({ ...data, id }); // ✅ ahora se guarda en this.todosLosTurnos
           });
       
-          // Escuchamos los botones de eliminar
-          lista.querySelectorAll('.btnEliminar').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              const id = btn.dataset.id;
-      
-              if (confirm("¿Estás seguro de que querés eliminar este turno?")) {
-                try {
-                  await db.collection('turnos').doc(id).delete();
-                  btn.parentElement.remove(); // Lo quitamos del HTML
-                } catch (err) {
-                  alert('Error al eliminar el turno: ' + err.message);
-                }
-              }
-            });
-          });
+          calcularResumen(this.todosLosTurnos); // ✅ se pasa correctamente
+          this.renderizarTurnosAdmin(this.todosLosTurnos, this.todosLosTurnos);
       
         } catch (error) {
-          lista.innerHTML = `<p>Error al cargar los turnos: ${error.message}</p>`;
+          lista.innerHTML = `<p>Error al cargar: ${error.message}</p>`;
         }
       }
       
+
+      renderizarTurnosAdmin(filtrados, todosLosTurnos) {
+        const lista = document.querySelector('#listaTurnos');
+        lista.innerHTML = '';
       
+        filtrados.forEach(data => {
+          const div = document.createElement('div');
+          div.classList.add('turno-admin-item');
+      
+          const inputFecha = document.createElement('input');
+          inputFecha.type = 'date';
+          inputFecha.value = data.fecha;
+      
+          const selectFranja = document.createElement('select');
+          ['matutino', 'tarde'].forEach(f => {
+            const opt = document.createElement('option');
+            opt.value = f;
+            opt.text = f[0].toUpperCase() + f.slice(1);
+            if (data.franja === f) opt.selected = true;
+            selectFranja.appendChild(opt);
+          });
+      
+          const inputInicio = document.createElement('input');
+          inputInicio.type = 'time';
+          inputInicio.value = data.horaInicio || '';
+      
+          const inputFin = document.createElement('input');
+          inputFin.type = 'time';
+          inputFin.value = data.horaFin || '';
+      
+          const textareaNota = document.createElement('textarea');
+          textareaNota.placeholder = 'Notas internas';
+          textareaNota.value = data.nota || '';
+      
+          const btnGuardar = document.createElement('button');
+          btnGuardar.textContent = '💾 Guardar cambios';
+          btnGuardar.className = 'btnGuardarHorario';
+          btnGuardar.onclick = async () => {
+            if (confirm("¿Guardar cambios en este turno?")) {
+              await db.collection('turnos').doc(data.id).update({
+                fecha: inputFecha.value,
+                franja: selectFranja.value,
+                horaInicio: inputInicio.value,
+                horaFin: inputFin.value,
+                nota: textareaNota.value
+              });
+              alert('✅ Turno actualizado');
+              this.cargarTurnosAdmin();
+            }
+          };
+      
+          const btnEliminar = document.createElement('button');
+          btnEliminar.textContent = '🔚 Eliminar';
+          btnEliminar.className = 'btnEliminar';
+          btnEliminar.onclick = async () => {
+            if (confirm("¿Eliminar este turno definitivamente?")) {
+              await db.collection('turnos').doc(data.id).delete();
+              div.remove();
+              this.cargarTurnosAdmin();
+            }
+          };
+      
+          // 📱 WhatsApp al número del paciente si está
+          let btnWhatsApp = '';
+          let estadoTelefono = '';
+      
+          if (data.telefono && data.telefono.length >= 8) {
+            const telefono = data.telefono.replace(/\D/g, '');
+            const enlace = `https://wa.me/598${telefono}?text=Hola ${data.nombre}, confirmamos tu sesión para el ${data.fecha}.`;
+      
+            btnWhatsApp = document.createElement('a');
+            btnWhatsApp.href = enlace;
+            btnWhatsApp.target = "_blank";
+            btnWhatsApp.innerHTML = '<i class="fab fa-whatsapp"></i>';
+            btnWhatsApp.className = 'btnWhatsapp';
+      
+            estadoTelefono = '<span style="color: green;">✅</span>';
+          } else {
+            estadoTelefono = '<span style="color: orange;">⚠️</span>';
+          }
+      
+          div.innerHTML = `
+            <strong>${data.nombre}</strong> ${btnWhatsApp ? btnWhatsApp.outerHTML : ''} ${estadoTelefono}<br>
+            ${data.sintomas || 'Sin descripción'}<br>
+          `;
+      
+          div.appendChild(inputFecha);
+          div.appendChild(selectFranja);
+          div.appendChild(inputInicio);
+          div.appendChild(inputFin);
+          div.appendChild(textareaNota);
+          div.appendChild(btnGuardar);
+          div.appendChild(btnEliminar);
+      
+          lista.appendChild(div);
+        });
+      
+        document.querySelector('#buscadorTurnos').oninput = () => {
+          const val = document.querySelector('#buscadorTurnos').value.toLowerCase();
+          const filtrados = todosLosTurnos.filter(t =>
+            t.nombre?.toLowerCase().includes(val) || t.fecha?.includes(val)
+          );
+          this.renderizarTurnosAdmin(filtrados, todosLosTurnos);
+        };
+      
+        document.querySelector('#filtroFecha').onchange = () => {
+          const val = document.querySelector('#filtroFecha').value;
+          const filtrados = todosLosTurnos.filter(t => t.fecha === val);
+          this.renderizarTurnosAdmin(filtrados, todosLosTurnos);
+        };
+      }
       
 
-
-      
     }
-  
-    // Inicializar clase
+
+    function calcularResumen(turnos) {
+        const resumen = document.querySelector('#resumenTurnos');
+        const hoy = new Date().toISOString().split('T')[0];
+        const mesActual = hoy.slice(0, 7);
+      
+        let totalHoy = 0, totalMes = 0, matutinoHoy = 0, tardeHoy = 0;
+      
+        turnos.forEach(t => {
+            if (t.fecha === hoy) {
+                totalHoy++;
+              
+                // Agregar condicionales defensivos
+                const franja = t.franja?.toLowerCase?.() || '';
+              
+                if (franja === 'matutino') matutinoHoy++;
+                if (franja === 'tarde') tardeHoy++;
+              }
+          if (t.fecha?.startsWith(mesActual)) {
+            totalMes++;
+          }
+        });
+      
+        resumen.innerHTML = `
+          <p>🗕 <strong>Turnos hoy:</strong> ${totalHoy}</p>
+          <p>📈 <strong>Total este mes:</strong> ${totalMes}</p>
+          <p>🌄 Matutinos: ${matutinoHoy} | 🌇 Tarde: ${tardeHoy}</p>
+        `;
+      
+        resumen.classList.remove('flash');
+        void resumen.offsetWidth;
+        resumen.classList.add('flash');
+      }
+      
+
     new Sistema();
-  });
-  
+});
